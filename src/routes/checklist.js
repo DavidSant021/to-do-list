@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        let checklist = await Checklist.findById(req.params.id)
+        let checklist = await Checklist.findById(req.params.id).populate('tasks')
         res.status(200).render('checklists/show', { checklist: checklist })
     } catch (error) {
         res.status(500).render('pages/error', { error: 'Erro ao exibir as Listas de tarefas' })
@@ -57,7 +57,7 @@ router.put('/:id', async (req, res) => {
     let checklist = await Checklist.findById(req.params.id)
 
     try {
-        await checklist.update({name})
+        await checklist.updateOne({name})
         res.redirect('/checklists')
     } catch (error) {
         let errors = error.errors
@@ -67,7 +67,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        await Checklist.findByIdAndRemove(req.params.id)
+        await Checklist.findByIdAndDelete(req.params.id)
         res.redirect('/checklists')
     } catch (error) {
         res.status(500).render('pages/error', { error: 'Erro ao excluir checklist' })
