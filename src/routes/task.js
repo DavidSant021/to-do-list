@@ -17,7 +17,7 @@ checklistDepedentRoute.get('/:id/tasks/new', async (req, res) => {
 
 checklistDepedentRoute.post('/:id/tasks', async (req, res) => {
     let { name } = req.body.task
-    let task = new Task({name, checklist: req.params.id})
+    let task = new Task({ name, checklist: req.params.id })
 
     try {
         await task.save()
@@ -41,6 +41,18 @@ simpleRouter.delete('/:id', async (req, res) => {
         res.redirect(`/checklists/${checklist._id}`)
     } catch (error) {
         res.status(422).render('pages/error', { error: 'Erro ao remover uma tarefa' })
+    }
+})
+
+simpleRouter.put('/:id', async (req, res) => {
+    let task = await Task.findById(req.params.id)
+    try {
+        task.set(req.body.task)
+        await task.save()
+        res.status(200).json({ task })
+    } catch (error) {
+        let errors = error.errors
+        res.status(422).json({ task: { ...errors } })
     }
 })
 
